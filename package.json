@@ -1,0 +1,33 @@
+{
+  "name": "fci",
+  "version": "0.0.0",
+  "description": "food depot control",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/sudharsan-gandhi/fci"
+  },
+  "keywords": [
+    "fci",
+    "food",
+    "depot",
+    "food",
+    "depot",
+    "control"
+  ],
+  "author": "TeamKrew",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/sudharsan-gandhi/fci/issues"
+  },
+  "dependencies": {
+    "express-useragent": "~1.0.12",
+    "body-parser": "~1.18.2",
+    "express-session": "~1.15.6",
+    "express": "~4.16.2",
+    "express-status-monitor": "~1.0.1"
+  }
+}
