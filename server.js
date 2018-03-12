@@ -1,9 +1,30 @@
-const 	express		=	require('express'),
-	app		=	express(),
-	session		=	require('express-session'),
-	parser 		=	require('body-parser'),
-	statusMonitor 	= 	require('express-status-monitor')();
-	port		=	'8080';//change the port to ur wish but dnt commit this change.
+const 	express			=	require('express'),
+		app				=	express(),
+		session			=	require('express-session'),
+		parser 			=	require('body-parser'),
+		statusMonitor 	= 	require('express-status-monitor')(),
+		NodeCouchDb 	= 	require('node-couchdb'),
+		dbName			=   'fci',		
+		port			=	'8080';//change the port to ur wish but dnt commit this change.
+const 	db 				= 	new NodeCouchDb({
+							    auth: {
+							        user: 'root',
+							        pass: 'qwerty'
+							    }
+							});
+/*
+//change mockdata file to any json file you want to create mock in db
+let mockdata = './mockdata/products.json' 
+var documents = require(mockdata);
+documents.forEach(function(document){
+	db.insert(dbName,document)
+		.then(({data, headers, status}) => {
+	    	console.log("added:",data.name);
+		}, err => {
+		    console.log("error:",err);
+		});
+})
+*/
 //CORS handler
 	app.use(function(req, res, next) {
 	  res.header("Access-Control-Allow-Origin", "*");
@@ -21,7 +42,7 @@ const 	express		=	require('express'),
 			secure:true,
 			maxage:60000
 			}
-}));
+	}));
 //Static files handler
 	app.use(parser.json());
 	//app.get('/status', {} , statusMonitor.pageRoute)
@@ -35,7 +56,9 @@ const 	express		=	require('express'),
 */
 ////////////////////////////////////////////////////////CODE ONLY HERE OR IMPORT CODE WITH IN THIS SCOPE////////////////////////////////////
 
-
+ 	app.post('/user',function(req,res){
+ 		
+ 	})
 
 
 
