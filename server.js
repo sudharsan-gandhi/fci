@@ -14,7 +14,7 @@ const 	db 				= 	new NodeCouchDb({
 							});
 /*
 //change mockdata file to any json file you want to create mock in db
-let mockdata = './mockdata/products.json' 
+let mockdata = './mockdata/transport_users.json' 
 var documents = require(mockdata);
 documents.forEach(function(document){
 	db.insert(dbName,document)
