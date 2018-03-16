@@ -6,12 +6,7 @@ const 	express			=	require('express'),
 		NodeCouchDb 	= 	require('node-couchdb'),
 		dbName			=   'fci',		
 		port			=	'8080';//change the port to ur wish but dnt commit this change.
-const 	db 				= 	new NodeCouchDb({
-							    auth: {
-							        user: 'root',
-							        pass: 'qwerty'
-							    }
-							});
+const 	db 				= 	new NodeCouchDb();
 /*
 //change mockdata file to any json file you want to create mock in db
 let mockdata = './mockdata/transport_users.json' 
@@ -79,4 +74,4 @@ documents.forEach(function(document){
 	app.listen(port,function(error){
 		if(error) throw error
 			console.log('server started on:',port);
-});
+	});
