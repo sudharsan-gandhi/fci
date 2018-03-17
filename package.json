@@ -24,6 +24,7 @@
     "url": "https://github.com/sudharsan-gandhi/fci/issues"
   },
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "body-parser": "~1.18.2",
     "express": "~4.16.2",
     "express-session": "~1.15.6",

@@ -5,6 +5,7 @@ const 	express			=	require('express'),
 		statusMonitor 	= 	require('express-status-monitor')(),
 		NodeCouchDb 	= 	require('node-couchdb'),
 		dbName			=   'fci',		
+		bcrypt			=	require('bcrypt'),
 		port			=	'8080';//change the port to ur wish but dnt commit this change.
 const 	db 				= 	new NodeCouchDb();
 /*
@@ -51,10 +52,49 @@ documents.forEach(function(document){
 */
 ////////////////////////////////////////////////////////CODE ONLY HERE OR IMPORT CODE WITH IN THIS SCOPE////////////////////////////////////
 
- 	app.post('/user',function(req,res){
- 		
- 	})
+ 	app.post('/signup',function(req,res){
+		 console.log('request:',req.body);
+		 bcrypt.genSalt(10, function(err, salt) {
+			bcrypt.hash(req.body.password,salt, function(err, hash) {
+				if(err) res.status(401).send({error_msg:err});
+				req.body.password = hash;
+				console.log('after hashed:', req.body);
+				db.insert(dbName,req.body)
+					.then(({data, headers, status}) => {
+						res.json({success_msg: 'successfully signed up'});
+					}, err => {
+						console.log("error:",err);
+						res.status(401).send({error_msg:err});
+					});
+			});
+		});
+	 });
+	 
 
+	 app.post('/login',function(req,res){
+		 console.log('/login:',req.body);
+		 let doc = db.mango(dbName, {
+			 selector: {
+					email: req.body.email}
+			},{}).then(function(data,headers,status) { 
+				var hash= data.data.docs[0].password;
+				console.log(hash);
+				bcrypt.compare(req.body.password, hash)
+					.then(function(success) {
+						if(success) 
+							 res.json(data.data.docs[0]);
+						else
+							res.status(401).send({error_msg:err});
+						})
+					.catch(err => res.status(401).send({error_msg:err}));
+			},
+			function(err){
+				console.log(err);
+				res.status(401).send({error_msg:err});
+			});
+		
+	 })
+ 
 
 
 
