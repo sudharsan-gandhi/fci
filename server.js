@@ -6,7 +6,7 @@ const 	express			=	require('express'),
 		NodeCouchDb 	= 	require('node-couchdb'),
 		dbName			=   'fci',		
 		bcrypt			=	require('bcrypt'),
-		port			=	'8080';//change the port to ur wish but dnt commit this change.
+		port			=	'8000';//change the port to ur wish but dnt commit this change.
 const 	db 				= 	new NodeCouchDb();
 /*
 //change mockdata file to any json file you want to create mock in db
@@ -62,9 +62,10 @@ documents.forEach(function(document){
 				db.insert(dbName,req.body)
 					.then(({data, headers, status}) => {
 						res.json({success_msg: 'successfully signed up'});
-					}, err => {
-						console.log("error:",err);
-						res.status(401).send({error_msg:err});
+					})
+					.catch(err => {
+						console.log("error:", err);
+						res.status(401).send({ error_msg: err });
 					});
 			});
 		});
@@ -76,7 +77,11 @@ documents.forEach(function(document){
 		 let doc = db.mango(dbName, {
 			 selector: {
 					email: req.body.email}
-			},{}).then(function(data,headers,status) { 
+			},{}).then(function(data) { 
+				// Data    ---> data.data
+				// Headers ---> data.headers
+				// Status  ---> data.status
+
 				var hash= data.data.docs[0].password;
 				console.log(hash);
 				bcrypt.compare(req.body.password, hash)
@@ -87,10 +92,9 @@ documents.forEach(function(document){
 							res.status(401).send({error_msg:err});
 						})
 					.catch(err => res.status(401).send({error_msg:err}));
-			},
-			function(err){
+			}).catch(err => {
 				console.log(err);
-				res.status(401).send({error_msg:err});
+				res.status(401).send({ error_msg: err });
 			});
 		
 	 })
