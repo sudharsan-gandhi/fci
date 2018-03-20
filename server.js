@@ -1,13 +1,16 @@
 const 	express			=	require('express'),
 		app				=	express(),
 		session			=	require('express-session'),
+		flash 			=  	require('express-flash'),
 		parser 			=	require('body-parser'),
 		statusMonitor 	= 	require('express-status-monitor')(),
 		NodeCouchDb 	= 	require('node-couchdb'),
 		dbName			=   'fci',		
 		bcrypt			=	require('bcrypt'),
-		port			=	'8080';//change the port to ur wish but dnt commit this change.
-const 	db 				= 	new NodeCouchDb();
+		port			=	'8080',//change the port to ur wish but dnt commit this change.
+	 	db 				= 	new NodeCouchDb(),
+		passport 		= 	require('passport'),
+		LocalStrategy 	= 	require('passport-local').Strategy;
 /*
 //change mockdata file to any json file you want to create mock in db
 let mockdata = './mockdata/transport_users.json' 
@@ -39,9 +42,40 @@ documents.forEach(function(document){
 			maxage:60000
 			}
 	}));
-//Static files handler
+	app.use(flash());
+//body parser
 	app.use(parser.json());
+//passport js
+passport.use(new LocalStrategy({
+
+	},	
+	function(username, password) {
+		console.log('asadf');
+	//   db.users.findByUsername(username, function(err, user) {
+		// if (err) { return cb(err); }
+		// if (!user) { return cb(null, false); }
+		// if (user.password != password) { return cb(null, false); }
+	//   });
+	}));
+	passport.serializeUser(function(user, done) {
+		console.log('serialized',user.id);
+		done(null, user.id);
+	  });
+	  
+	  passport.deserializeUser(function(id, done) {
+		//User.findById(id, function(err, user) {
+			console.log(id)
+		  done(err, id);
+		//});
+	  });
+	app.use(passport.initialize());
+	app.use(passport.session());
+
+	
+
+	  
 	//app.get('/status', {} , statusMonitor.pageRoute)
+//Static files handler
 	//app.use('/{any_route_name}',express.static(_dirname='./{dir_name}'));
 //request handler
 
@@ -68,10 +102,10 @@ documents.forEach(function(document){
 					});
 			});
 		});
-	 });
-	 
-
-	 app.post('/login',function(req,res){
+	});
+	app.post('/login',passport.authenticate('local'))
+		
+	app.post('/logi',function(req,res){
 		 console.log('/login:',req.body);
 		 let doc = db.mango(dbName, {
 			 selector: {
@@ -93,7 +127,7 @@ documents.forEach(function(document){
 				res.status(401).send({error_msg:err});
 			});
 		
-	 })
+	})
  
 
 
