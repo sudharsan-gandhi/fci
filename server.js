@@ -91,16 +91,30 @@ app.use('/miller',millerRoutes);
 				var hash= data.data.docs[0].password;
 				console.log(hash);
 				bcrypt.compare(req.body.password, hash)
-					.then(function(success) {
-						if(success) 
-							 res.json(data.data.docs[0]);
-						else
-							res.status(401).send({error_msg:err});
+					.then(function(success) {	
+						var redirect;	
+						console.log(data.data.docs[0].role)		
+						if(success)
+						{ 
+							if(data.data.docs[0].role == 'miller')
+							{
+								redirect = "miller/dashboard";
+							}
+							else 
+							{
+								if(data.data.docs[0].role == 'manager')
+								redirect = "manager/dashboard";
+							}
+							res.status(200).send({data : data.data.docs[0],path: redirect });
+						}		
+						 else
+						 {
+							res.status(401).send({error_msg: "Invalid Password",path :"/login"});
+						 }
 						})
-					.catch(err => res.status(401).send({error_msg:err}));
+					.catch(err => res.status(401).send({error_msg: "Try after sometime" ,path :"/login" }));
 			}).catch(err => {
-				console.log(err);
-				res.status(401).send({ error_msg: err });
+				res.status(403).send({ error_msg: "Invalid UserName" ,path :"/login"});
 			});
 		
 	 })
