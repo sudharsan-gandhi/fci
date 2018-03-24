@@ -18,10 +18,11 @@ module.exports.authenticateMiller = function(req,res,next) {
     jwt.verify(token,config.secretkey,function(err,data){
         if (err) {
             res.sendStatus(403);
-          }
-        if(data.role == 'miller'){
-            req.user = data;
-        }else res.sendStatus(401);
+          }else{
+            if(data.role == 'miller'){
+                req.user = data;
+            }else res.sendStatus(401);
+        }
         
     })
     next();
