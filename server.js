@@ -8,6 +8,11 @@ const 	express			=	require('express'),
 		bcrypt			=	require('bcrypt'),
 		port			=	'8080';//change the port to ur wish but dnt commit this change.
 const 	db 				= 	new NodeCouchDb();
+const common = require("./common");
+const jwt = require("jsonwebtoken");
+const commonRoutes = require("./common-routes");
+const millerRoutes = require("./miller-routes");
+const managerRouter = require("./manager-routes");
 /*
 //change mockdata file to any json file you want to create mock in db
 let mockdata = './mockdata/transport_users.json' 
@@ -51,7 +56,8 @@ documents.forEach(function(document){
 	});
 */
 ////////////////////////////////////////////////////////CODE ONLY HERE OR IMPORT CODE WITH IN THIS SCOPE////////////////////////////////////
-
+app.use('/',commonRoutes);
+app.use('/miller',millerRoutes);
  	app.post('/signup',function(req,res){
 		 console.log('request:',req.body);
 		 bcrypt.genSalt(10, function(err, salt) {
@@ -95,6 +101,7 @@ documents.forEach(function(document){
 		
 	 })
  
+	 
 
 
 
