@@ -96,8 +96,10 @@ app.use('/miller',millerRoutes);
 						console.log(data.data.docs[0].role)		
 						if(success)
 						{ 
+							var token = common.createToken();
+							console.log(token);
 							if(data.data.docs[0].role == 'miller')
-							{
+							{	
 								redirect = "miller/dashboard";
 							}
 							else 
