@@ -1,6 +1,7 @@
+const NodeCouchDb 	= 	require('node-couchdb'),
+dbName			=   'fci';
 const config = require('./config');
 const jwt = require("jsonwebtoken");
-
 function bearerToken(req,res) {
     const bearerHeader = req.headers["authorization"];
     if (typeof bearerHeader !== 'undefined') {
@@ -47,3 +48,4 @@ module.exports.createToken = function(user){
     const token = jwt.sign({id:user.id,role: user.role},config.secretkey);
     return token;
 }
+
