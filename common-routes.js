@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const common = require("./common");
+const	dbConfig		= 	require('./database');
+const 	db 				= 	dbConfig.db;
+const 	dbName			= 	dbConfig.dbName;
 
 router.get('/api',function(req,res){
     res.json({success: 'success'});
