@@ -19,6 +19,7 @@ module.exports.authenticateMiller = function(req,res,next) {
         if (err) {
             res.sendStatus(403);
           }else{
+            console.log("msggggg:",data);
             if(data.role == 'miller'){
                 req.user = data;
             }else res.sendStatus(401);
@@ -46,16 +47,19 @@ module.exports.authenticateManager = function(req,res,next) {
 module.exports.authenticate = function(req,res,next) {
     var token =bearerToken(req,res);
     if(token==null) res.sendStatus(403);
-    jwt.verify(token,config.secretkey,function(err,data){
+    decode = jwt.verify(token,config.secretkey,function(err,data){
         if (err) {
             res.sendStatus(403);
-          }else
+          }else {
+              console.log("msg:",data);
             req.user = data;
+          }
     })
+    console.log("msgggg:  ",decode)
     next();
 };
 
 module.exports.createToken = function(user){
-    const token = jwt.sign({id:user.id,role: user.role},config.secretkey);
+    const token = jwt.sign({_id:user._id,role: user.role},config.secretkey);
     return token;
 }

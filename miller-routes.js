@@ -9,7 +9,8 @@ router.use(function authenticate(req, res, next) {
 });
 
 router.get('/api',function(req,res){
-    res.send('asdfa');
+    console.log(req.user.id);
+    res.json("msg");
 });
 
 module.exports = router;

@@ -89,14 +89,14 @@ app.use('/miller',millerRoutes);
 				// Status  ---> data.status
 
 				var hash= data.data.docs[0].password;
-				console.log(hash);
+				//console.log(hash);
 				bcrypt.compare(req.body.password, hash)
 					.then(function(success) {	
 						var redirect;	
 						console.log(data.data.docs[0].role)		
 						if(success)
 						{ 
-							var token = common.createToken();
+							var token = common.createToken(data.data.docs[0]);
 							console.log(token);
 							if(data.data.docs[0].role == 'miller')
 							{	
