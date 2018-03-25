@@ -43,6 +43,18 @@ module.exports.authenticateManager = function(req,res,next) {
     next();
 };
 
+module.exports.authenticate = function(req,res,next) {
+    var token =bearerToken(req,res);
+    if(token==null) res.sendStatus(403);
+    jwt.verify(token,config.secretkey,function(err,data){
+        if (err) {
+            res.sendStatus(403);
+          }else
+            req.user = data;
+    })
+    next();
+};
+
 module.exports.createToken = function(user){
     const token = jwt.sign({id:user.id,role: user.role},config.secretkey);
     return token;
