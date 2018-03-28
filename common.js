@@ -15,19 +15,24 @@ function bearerToken(req,res) {
 
 module.exports.authenticateMiller = function(req,res,next) {
     var token =bearerToken(req,res);
-    if(token==null) res.send(403);
-    jwt.verify(token,config.secretkey,function(err,data){
-        if (err) {
-            res.sendStatus(403);
-          }else{
-            console.log("msggggg:",data);
-            if(data.role == 'miller'){
-                req.user = data;
-            }else res.sendStatus(401);
-        }
-        
-    })
-    next();
+    if(token==null) {
+        res.send(403)
+        res.end();
+    }else{
+        jwt.verify(token,config.secretkey,function(err,data){
+            if (err) {
+                res.status(403).send("forbidden");
+            }else{
+                console.log("msggggg:",data);
+                if(data.role == 'miller'){
+                    req.user = data;
+                }else {
+                    res.status(401).send("unauthorized");
+                }
+            }
+            
+        })
+    }
 };
 
 module.exports.authenticateManager = function(req,res,next) {
