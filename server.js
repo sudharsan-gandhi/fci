@@ -13,6 +13,8 @@ const jwt = require("jsonwebtoken");
 const commonRoutes = require("./common-routes");
 const millerRoutes = require("./miller-routes");
 const managerRouter = require("./manager-routes");
+const { check, validationResult } = require('express-validator/check');
+const { matchedData, sanitize } = require('express-validator/filter');
 /*
 //change mockdata file to any json file you want to create mock in db
 let mockdata = './mockdata/transport_users.json' 
@@ -58,23 +60,38 @@ documents.forEach(function(document){
 ////////////////////////////////////////////////////////CODE ONLY HERE OR IMPORT CODE WITH IN THIS SCOPE////////////////////////////////////
 app.use('/',commonRoutes);
 app.use('/miller',millerRoutes);
- 	app.post('/signup',function(req,res){
-		 console.log('request:',req.body);
-		 bcrypt.genSalt(10, function(err, salt) {
+
+ 	app.post('/signup', validation(),function(req,res,next){
+		let doc = db.mango(dbName, {
+			selector: {
+				   email: req.body.email}
+		   },{}).then(data => 
+			res.status(401).send({error_msg: 'Email already in use',path: '/signUp'}));
+		 console.log('request:',req.body); 
+		 const errors = validationResult(req);
+		 if(!errors.isEmpty())
+		 {
+			res.status(401).send({error_msg: errors.mapped(),path: '/signUp'});
+		 }
+		 else
+		 {
+		    bcrypt.genSalt(10, function(err, salt) {
 			bcrypt.hash(req.body.password,salt, function(err, hash) {
-				if(err) res.status(401).send({error_msg:err});
+				if(err) res.status(401).send({error_msg:err,path: '/signUp'});
 				req.body.password = hash;
 				console.log('after hashed:', req.body);
 				db.insert(dbName,req.body)
 					.then(({data, headers, status}) => {
 						res.json({success_msg: 'successfully signed up'});
+						res.status(200).send({success_msg,path: '/login' });
 					})
 					.catch(err => {
 						console.log("error:", err);
-						res.status(401).send({ error_msg: err });
+						res.status(401).send({ error_msg: err ,path: '/signUp'});
 					});
 			});
 		});
+	 }
 	 });
 	 
 
@@ -89,7 +106,7 @@ app.use('/miller',millerRoutes);
 				// Status  ---> data.status
 
 				var hash= data.data.docs[0].password;
-				console.log(hash);
+				//console.log(hash);
 				bcrypt.compare(req.body.password, hash)
 					.then(function(success) {	
 						var redirect='/login';	
@@ -143,3 +160,15 @@ app.use('/miller',millerRoutes);
 		if(error) throw error
 			console.log('server started on:',port);
 	});
+
+	function validation(){
+		return [
+		check('email').isEmail().withMessage('Please Enter valid email').trim().normalizeEmail(),
+	  	check('password', 'passwords must be at least 6 chars long contain one number,one capital letter and one small letter').isLength({ min: 6 }).matches('(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,}'),
+		check('first_name','Enter Mininium length of 5 and maximum length of 30').isLength({min:5}).isLength({max:30}).matches('(?:[a-zA-z.\\s])'),
+		check('last_name','Last Name should be only string ,dot and space').matches('(?:[a-zA-z.\\s])'),
+		//check('middle_name','Middle Name should be only string ,dot and space').matches('(?:[a-zA-z.\\s])').isEmpty
+	]
+	}
+
+	
