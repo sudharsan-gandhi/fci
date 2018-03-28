@@ -56,6 +56,6 @@ module.exports.authenticate = function(req,res,next) {
 };
 
 module.exports.createToken = function(user){
-    const token = jwt.sign({id:user.id,role: user.role},config.secretkey);
+    const token = jwt.sign({_id:user._id,role: user.role},config.secretkey);
     return token;
 }

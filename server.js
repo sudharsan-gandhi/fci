@@ -29,7 +29,7 @@ documents.forEach(function(document){
 //CORS handler
 	app.use(function(req, res, next) {
 	  res.header("Access-Control-Allow-Origin", "*");
-	  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization");
 	  next();
 	});
 //status monitor
@@ -92,11 +92,11 @@ app.use('/miller',millerRoutes);
 				console.log(hash);
 				bcrypt.compare(req.body.password, hash)
 					.then(function(success) {	
-						var redirect;	
+						var redirect='/login';	
 						console.log(data.data.docs[0].role)		
 						if(success)
 						{ 
-							var token = common.createToken();
+							var token = common.createToken(data.data.docs[0]);
 							console.log(token);
 							if(data.data.docs[0].role == 'miller')
 							{	
@@ -107,7 +107,7 @@ app.use('/miller',millerRoutes);
 								if(data.data.docs[0].role == 'manager')
 								redirect = "manager/dashboard";
 							}
-							res.status(200).send({data : data.data.docs[0],path: redirect });
+							res.status(200).send({data : data.data.docs[0],path: redirect, token: token });
 						}		
 						 else
 						 {
