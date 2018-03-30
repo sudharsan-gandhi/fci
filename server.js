@@ -62,36 +62,47 @@ app.use('/',commonRoutes);
 app.use('/miller',millerRoutes);
 
  	app.post('/signup', validation(),function(req,res,next){
+
+		
+
+
 		let doc = db.mango(dbName, {
 			selector: {
-				   email: req.body.email}
-		   },{}).then(data => 
-			res.status(401).send({error_msg: 'Email already in use',path: '/signUp'}));
-		 console.log('request:',req.body); 
-		 const errors = validationResult(req);
-		 if(!errors.isEmpty())
-		 {
-			res.status(401).send({error_msg: errors.mapped(),path: '/signUp'});
-		 }
-		 else
-		 {
-		    bcrypt.genSalt(10, function(err, salt) {
-			bcrypt.hash(req.body.password,salt, function(err, hash) {
-				if(err) res.status(401).send({error_msg:err,path: '/signUp'});
-				req.body.password = hash;
-				console.log('after hashed:', req.body);
-				db.insert(dbName,req.body)
-					.then(({data, headers, status}) => {
-						res.json({success_msg: 'successfully signed up'});
-						res.status(200).send({success_msg,path: '/login' });
-					})
-					.catch(err => {
+				"email": { "$eq": req.body.email }}
+		},{})
+		.then(({data, headers, status}) => {
+			console.log('email validate:',data," lengthhhh",data.docs.length);
+			if(data.docs.length){
+				console.log('i not found');
+			res.status(403).send({error_msg: 'Email already in use',path: '/signUp'});
+			}
+			else{
+				bcrypt.genSalt(10, function(err, salt) {
+					bcrypt.hash(req.body.password,salt, function(err, hash) {
+						if(err) 
+						{
+							console.log('Error1:', err);
+							res.status(401).send({error_msg:err,path: '/signup'});
+						}else{	
+						req.body.password = hash;
+						console.log('after hashed:', req.body);
+						db.insert(dbName,req.body)
+						.then(({data, status}) => {
+							res.status(200).send({success_msg: 'successfully signed up',path: '/login' });
+						})
+						.catch(err => {
 						console.log("error:", err);
-						res.status(401).send({ error_msg: err ,path: '/signUp'});
+						res.status(401).send({ error_msg: err ,path: '/signup'});
 					});
-			});
+				}
+			}
+					)});
+			}
+		}
+		).catch(err => {
+			res.status(400).send({err: err,path: '/signup'});
 		});
-	 }
+		 
 	 });
 	 
 
