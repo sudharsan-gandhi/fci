@@ -121,19 +121,25 @@ app.use('/miller',millerRoutes);
 				bcrypt.compare(req.body.password, hash)
 					.then(function(success) {	
 						var redirect='/login';	
-						console.log(data.data.docs[0].role)		
+						console.log(data.data.docs[0].type)		
 						if(success)
 						{ 
 							var token = common.createToken(data.data.docs[0]);
 							console.log(token);
-							if(data.data.docs[0].role == 'miller')
+							if(data.data.docs[0].type === 'miller')
 							{	
 								redirect = "miller/dashboard";
 							}
 							else 
 							{
-								if(data.data.docs[0].role == 'manager')
-								redirect = "manager/dashboard";
+								if(data.data.docs[0].type === 'manager')
+								redirect = "depot-manager/dashboard";
+
+								if (data.data.docs[0].type === 'operator')
+									redirect = "depot-operator/dashboard";
+
+								if (data.data.docs[0].type === 'gate')
+									redirect = "gate-operator/dashboard";
 							}
 							res.status(200).send({data : data.data.docs[0],path: redirect, token: token });
 						}		
